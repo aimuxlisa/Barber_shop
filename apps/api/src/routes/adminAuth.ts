@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import "@fastify/cookie";
 import { prisma } from "@barbershop/db";
 import crypto from "node:crypto";
 
