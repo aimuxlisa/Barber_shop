@@ -6,6 +6,7 @@ config({ path: resolve(process.cwd(), "../../.env") });
 
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 import { prisma } from "@barbershop/db";
 import { healthRoutes } from "./routes/health";
 import { serviceRoutes } from "./routes/services";
@@ -27,9 +28,12 @@ const CORS_ORIGINS = (process.env.CORS_ORIGINS ?? "http://localhost:3000,http://
 export async function buildApp() {
   const app = Fastify({ logger: true });
 
+  await app.register(cookie);
+
   await app.register(cors, {
     origin: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true,
   });
 
   app.setNotFoundHandler((request, reply) => {
