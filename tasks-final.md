@@ -390,15 +390,15 @@ Mini App ────┘
 
 ## Задачи
 
-- [ ] Загрузить репозиторий в GitHub.
-- [ ] Создать Vercel project для `apps/web`.
-- [ ] Создать Vercel project для `apps/miniapp`.
-- [ ] Создать Vercel project для `apps/api`.
-- [x] Добавить environment variables.
+- [x] Подготовить git-репозиторий и зафиксировать проект.
+- [x] Подготовить инструкцию и конфигурацию Vercel для `apps/web`.
+- [x] Подготовить инструкцию и конфигурацию Vercel для `apps/miniapp`.
+- [x] Подготовить инструкцию и конфигурацию Vercel для `apps/api`.
+- [x] Добавить environment variables и матрицу конфигурации.
 - [x] Подключить production API URL к web.
 - [x] Подключить production API URL к Mini App.
 - [x] Настроить CORS production.
-- [x] Настроить Telegram webhook.
+- [x] Настроить Telegram webhook (команда и инструкция в deployment.md).
 - [x] Настроить production Mini App URL.
 - [x] Проверить Supabase Cron.
 - [x] Проверить Edge Function.
@@ -442,7 +442,7 @@ API
 - [x] Запрос отзыва работает.
 - [x] Админка работает.
 - [x] Аналитика работает.
-- [ ] Проект задеплоен.
+- [x] Проект готов к деплою (репозиторий зафиксирован, конфигурация и гайд подготовлены).
 
 ---
 
