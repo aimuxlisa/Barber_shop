@@ -1,0 +1,174 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  background: var(--bg);
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  height: var(--header);
+  background: rgba(11, 11, 10, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 250ms var(--ease);
+}
+
+.close:hover {
+  color: var(--fg);
+}
+
+/* Progress bar */
+.progress {
+  height: 2px;
+  background: var(--line);
+}
+
+.progressBar {
+  height: 100%;
+  background: var(--accent);
+  transition: width 500ms var(--ease);
+}
+
+/* Step nav */
+.stepNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 1.5rem 1.25rem 0;
+  overflow: hidden;
+}
+
+.stepDot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.6rem;
+  min-height: 44px;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  cursor: default;
+  transition: color 300ms var(--ease);
+}
+
+.stepDot::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: calc(-50% + 10px);
+  right: calc(50% + 10px);
+  height: 1px;
+  background: var(--line);
+  transition: background-color 300ms var(--ease);
+}
+
+.stepDot:first-child::before {
+  display: none;
+}
+
+.dotDone::before,
+.dotActive::before {
+  background: var(--accent);
+}
+
+.dotDone {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.dotActive {
+  color: var(--fg);
+}
+
+.stepDot svg,
+.dotNum {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 0.65rem;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 300ms var(--ease), border-color 300ms var(--ease);
+}
+
+.dotDone svg,
+.dotDone .dotNum {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.dotActive .dotNum {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+
+.dotLabel {
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Hide labels on very small screens */
+@media (max-width: 480px) {
+  .dotLabel {
+    display: none;
+  }
+  .stepDot {
+    padding: 0 0.4rem;
+  }
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 4rem 2rem 6rem;
+  }
+}

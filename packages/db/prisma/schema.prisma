@@ -1,0 +1,221 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum BookingStatus {
+  confirmed
+  completed
+  cancelled
+  no_show
+
+  @@map("booking_status")
+}
+
+enum BookingSource {
+  web
+  telegram
+  admin
+
+  @@map("booking_source")
+}
+
+model Service {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String
+  durationMin Int      @map("duration_min")
+  price       Int
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+
+  barberServices  BarberService[]
+  bookingServices BookingService[]
+
+  @@map("services")
+}
+
+model Barber {
+  id             String  @id @default(uuid()) @db.Uuid
+  name           String
+  photoUrl       String  @map("photo_url")
+  bio            String
+  experienceYears Int    @map("experience_years")
+  telegramChatId String? @map("telegram_chat_id")
+  isActive       Boolean @default(true) @map("is_active")
+  sortOrder      Int     @default(0) @map("sort_order")
+
+  portfolioItems  PortfolioItem[]
+  barberServices  BarberService[]
+  workingHours    WorkingHours[]
+  breaks          Break[]
+  timeOff         TimeOff[]
+  bookings        Booking[]
+  reviews         Review[]
+
+  @@map("barbers")
+}
+
+model PortfolioItem {
+  id        String @id @default(uuid()) @db.Uuid
+  barberId  String @map("barber_id") @db.Uuid
+  imageUrl  String @map("image_url")
+  sortOrder Int    @default(0) @map("sort_order")
+
+  barber Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  @@index([barberId])
+  @@map("portfolio_items")
+}
+
+model BarberService {
+  barberId    String  @map("barber_id") @db.Uuid
+  serviceId   String  @map("service_id") @db.Uuid
+  durationMin Int?    @map("duration_min")
+  price       Int?
+  isEnabled   Boolean @default(true) @map("is_enabled")
+
+  barber  Barber  @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([barberId, serviceId])
+  @@map("barber_services")
+}
+
+model WorkingHours {
+  id        String @id @default(uuid()) @db.Uuid
+  barberId  String @map("barber_id") @db.Uuid
+  weekday   Int
+  startTime DateTime @map("start_time") @db.Time(0)
+  endTime   DateTime @map("end_time") @db.Time(0)
+
+  barber Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  @@unique([barberId, weekday])
+  @@map("working_hours")
+}
+
+model Break {
+  id        String   @id @default(uuid()) @db.Uuid
+  barberId  String   @map("barber_id") @db.Uuid
+  weekday   Int
+  startTime DateTime @map("start_time") @db.Time(0)
+  endTime   DateTime @map("end_time") @db.Time(0)
+
+  barber Barber @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  @@index([barberId, weekday])
+  @@map("breaks")
+}
+
+model TimeOff {
+  id        String   @id @default(uuid()) @db.Uuid
+  barberId  String?  @map("barber_id") @db.Uuid
+  startsAt  DateTime @map("starts_at") @db.Timestamptz(6)
+  endsAt    DateTime @map("ends_at") @db.Timestamptz(6)
+  type      String
+  note      String?
+
+  barber Barber? @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  @@index([barberId, startsAt, endsAt])
+  @@index([startsAt, endsAt])
+  @@map("time_off")
+}
+
+model Client {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  phone          String
+  telegramId     String?  @unique @map("telegram_id")
+  telegramChatId String?  @map("telegram_chat_id")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  bookings Booking[]
+  reviews  Review[]
+
+  @@index([phone])
+  @@map("clients")
+}
+
+model Booking {
+  id                 String        @id @default(uuid()) @db.Uuid
+  clientId           String        @map("client_id") @db.Uuid
+  barberId           String        @map("barber_id") @db.Uuid
+  startsAt           DateTime      @map("starts_at") @db.Timestamptz(6)
+  endsAt             DateTime      @map("ends_at") @db.Timestamptz(6)
+  totalPrice         Int           @map("total_price")
+  totalDurationMin   Int           @map("total_duration_min")
+  status             BookingStatus
+  source             BookingSource
+  manageToken        String        @unique @map("manage_token")
+  createdAt          DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  reminderDaySentAt  DateTime?     @map("reminder_day_sent_at") @db.Timestamptz(6)
+  reminder30mSentAt  DateTime?     @map("reminder_30m_sent_at") @db.Timestamptz(6)
+  reviewRequestedAt  DateTime?     @map("review_requested_at") @db.Timestamptz(6)
+  autoCompletedAt    DateTime?     @map("auto_completed_at") @db.Timestamptz(6)
+
+  client   Client           @relation(fields: [clientId], references: [id], onDelete: Restrict)
+  barber   Barber           @relation(fields: [barberId], references: [id], onDelete: Restrict)
+  services BookingService[]
+  review   Review?
+
+  @@index([barberId, startsAt])
+  @@index([clientId, startsAt])
+  @@index([status, startsAt])
+  @@map("bookings")
+}
+
+model BookingService {
+  bookingId   String @map("booking_id") @db.Uuid
+  serviceId   String @map("service_id") @db.Uuid
+  name        String
+  durationMin Int    @map("duration_min")
+  price       Int
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@id([bookingId, serviceId])
+  @@map("booking_services")
+}
+
+model Review {
+  id        String   @id @default(uuid()) @db.Uuid
+  bookingId String   @unique @map("booking_id") @db.Uuid
+  barberId  String   @map("barber_id") @db.Uuid
+  clientId  String   @map("client_id") @db.Uuid
+  rating    Int
+  comment   String
+  isPublic  Boolean  @default(false) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  barber  Barber  @relation(fields: [barberId], references: [id], onDelete: Restrict)
+  client  Client  @relation(fields: [clientId], references: [id], onDelete: Restrict)
+
+  @@index([barberId, isPublic])
+  @@map("reviews")
+}
+
+model Setting {
+  key   String @id
+  value String
+
+  @@map("settings")
+}
+
+model AdminUser {
+  id             String  @id @default(uuid()) @db.Uuid
+  login          String  @unique
+  passwordHash   String  @map("password_hash")
+  telegramChatId String? @map("telegram_chat_id")
+
+  @@map("admin_users")
+}

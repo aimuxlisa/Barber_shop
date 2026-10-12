@@ -1,0 +1,32 @@
+:root {
+  --bg: var(--tg-theme-bg-color, #0b0b0a);
+  --bg-2: var(--tg-theme-secondary-bg-color, #151513);
+  --fg: var(--tg-theme-text-color, #f3f0ea);
+  --muted: var(--tg-theme-hint-color, #96928a);
+  --accent: var(--tg-theme-button-color, #b58a5a);
+  --accent-text: var(--tg-theme-button-text-color, #0b0b0a);
+  --accent-soft: rgba(181, 138, 90, 0.18);
+  --line: rgba(243, 240, 234, 0.12);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Cinzel', Georgia, serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+}
